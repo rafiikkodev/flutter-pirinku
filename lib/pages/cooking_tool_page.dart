@@ -99,8 +99,10 @@ class _CookingToolPageState extends State<CookingToolPage> {
               runSpacing: 10,
               children: selectedTools.map((tool) {
                 return Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: chipColor,
                     borderRadius: BorderRadius.circular(8),
@@ -126,11 +128,7 @@ class _CookingToolPageState extends State<CookingToolPage> {
                             color: bgRedColor,
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(
-                            Icons.close,
-                            size: 12,
-                            color: txtWhite,
-                          ),
+                          child: Icon(Icons.close, size: 12, color: txtWhite),
                         ),
                       ),
                     ],
@@ -166,8 +164,10 @@ class _CookingToolPageState extends State<CookingToolPage> {
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide(color: primaryGreenColor, width: 2),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
               ),
             ),
             const SizedBox(height: 10),
@@ -180,7 +180,9 @@ class _CookingToolPageState extends State<CookingToolPage> {
                     onTap: () => onAddTool(tool),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: chipColor,
                         borderRadius: BorderRadius.circular(8),
@@ -208,7 +210,7 @@ class _CookingToolPageState extends State<CookingToolPage> {
                     color: Color(0x19000000),
                     blurRadius: 24,
                     offset: Offset(0, -4),
-                  )
+                  ),
                 ],
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -234,7 +236,12 @@ class _CookingToolPageState extends State<CookingToolPage> {
               ),
             ),
             const SizedBox(height: 24),
-            CustomButton(text: "Lanjut", onPressed: () {})
+            CustomButton(
+              text: "Lanjut",
+              onPressed: () {
+                Navigator.pushNamed(context, "/homepage");
+              },
+            ),
           ],
         ),
       ),

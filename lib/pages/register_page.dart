@@ -32,11 +32,13 @@ class _RegisterPageState extends State<RegisterPage> {
     usernameController = TextEditingController(text: controller.username.value);
     emailController = TextEditingController(text: controller.email.value);
     passwordController = TextEditingController(text: controller.password.value);
-    confirmPasswordController =
-        TextEditingController(text: controller.confirmPassword.value);
+    confirmPasswordController = TextEditingController(
+      text: controller.confirmPassword.value,
+    );
     fullNameController = TextEditingController(text: controller.fullName.value);
-    phoneNumberController =
-        TextEditingController(text: controller.phoneNumber.value);
+    phoneNumberController = TextEditingController(
+      text: controller.phoneNumber.value,
+    );
     addressController = TextEditingController(text: controller.address.value);
   }
 
@@ -64,36 +66,40 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 80),
-                Obx(() => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          controller.currentStep.value == 0
-                              ? 'Buat Akun'
-                              : 'Detail Diri',
-                          style: primaryTextStyle.copyWith(
-                            color: txtPrimary,
-                            fontSize: 22,
-                            fontWeight: semiBold,
-                          ),
+                Obx(
+                  () => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        controller.currentStep.value == 0
+                            ? 'Buat Akun'
+                            : 'Detail Diri',
+                        style: primaryTextStyle.copyWith(
+                          color: txtPrimary,
+                          fontSize: 22,
+                          fontWeight: semiBold,
                         ),
-                        const SizedBox(height: 10),
-                        Text(
-                          controller.currentStep.value == 0
-                              ? 'Gabung dan mulai masak bareng pirinku'
-                              : 'Isi detail diri kamu',
-                          style: primaryTextStyle.copyWith(
-                            color: txtPrimary,
-                            fontSize: 14,
-                            fontWeight: medium,
-                          ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        controller.currentStep.value == 0
+                            ? 'Gabung dan mulai masak bareng pirinku'
+                            : 'Isi detail diri kamu',
+                        style: primaryTextStyle.copyWith(
+                          color: txtPrimary,
+                          fontSize: 14,
+                          fontWeight: medium,
                         ),
-                      ],
-                    )),
+                      ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 25),
-                Obx(() => controller.currentStep.value == 0
-                    ? _buildStep1()
-                    : _buildStep2()),
+                Obx(
+                  () => controller.currentStep.value == 0
+                      ? _buildStep1()
+                      : _buildStep2(),
+                ),
                 const SizedBox(height: 25),
                 _buildBottomText(),
               ],
@@ -108,29 +114,46 @@ class _RegisterPageState extends State<RegisterPage> {
     return Column(
       children: [
         _buildTextField(
-            label: 'Username',
-            controller: usernameController,
-            onChanged: (value) => controller.username.value = value),
+          label: 'Username',
+          controller: usernameController,
+          onChanged: (value) => controller.username.value = value,
+        ),
         const SizedBox(height: 25),
         _buildTextField(
-            label: 'Email',
-            controller: emailController,
-            onChanged: (value) => controller.email.value = value,
-            keyboardType: TextInputType.emailAddress),
+          label: 'Email',
+          controller: emailController,
+          onChanged: (value) => controller.email.value = value,
+          keyboardType: TextInputType.emailAddress,
+        ),
         const SizedBox(height: 25),
         _buildPasswordField(
-            label: 'Kata Sandi',
-            controller: passwordController,
-            onChanged: (value) => controller.password.value = value,
-            isPasswordVisible: isPasswordVisible),
+          label: 'Kata Sandi',
+          controller: passwordController,
+          onChanged: (value) => controller.password.value = value,
+          isPasswordVisible: isPasswordVisible,
+        ),
         const SizedBox(height: 25),
         _buildPasswordField(
-            label: 'Konfirmasi Kata Sandi',
-            controller: confirmPasswordController,
-            onChanged: (value) => controller.confirmPassword.value = value,
-            isPasswordVisible: isConfirmPasswordVisible),
+          label: 'Konfirmasi Kata Sandi',
+          controller: confirmPasswordController,
+          onChanged: (value) => controller.confirmPassword.value = value,
+          isPasswordVisible: isConfirmPasswordVisible,
+        ),
         const SizedBox(height: 25),
-        CustomButton(text: 'Lanjut', onPressed: controller.nextStep),
+        CustomButton(
+          text: controller.currentStep.value == 0 ? 'Lanjut' : 'Daftar',
+          onPressed: () async {
+            if (controller.currentStep.value == 0) {
+              controller.nextStep();
+            } else {
+              try {
+                await controller.register();
+              } catch (e) {
+                print('Error in register page: $e');
+              }
+            }
+          },
+        ),
       ],
     );
   }
@@ -139,25 +162,34 @@ class _RegisterPageState extends State<RegisterPage> {
     return Column(
       children: [
         _buildTextField(
-            label: 'Nama Lengkap',
-            controller: fullNameController,
-            onChanged: (value) => controller.fullName.value = value),
+          label: 'Nama Lengkap',
+          controller: fullNameController,
+          onChanged: (value) => controller.fullName.value = value,
+        ),
         const SizedBox(height: 25),
         _buildTextField(
-            label: 'No Hp',
-            controller: phoneNumberController,
-            onChanged: (value) => controller.phoneNumber.value = value,
-            keyboardType: TextInputType.phone),
+          label: 'No Hp',
+          controller: phoneNumberController,
+          onChanged: (value) => controller.phoneNumber.value = value,
+          keyboardType: TextInputType.phone,
+        ),
         const SizedBox(height: 25),
         _buildTextField(
-            label: 'Alamat Lengkap',
-            controller: addressController,
-            onChanged: (value) => controller.address.value = value,
-            maxLines: 3),
+          label: 'Alamat Lengkap',
+          controller: addressController,
+          onChanged: (value) => controller.address.value = value,
+          maxLines: 3,
+        ),
         const SizedBox(height: 25),
         CustomButton(
           text: 'Daftar',
-          onPressed: () => Get.toNamed('/cookingtool'),
+          onPressed: () async {
+            try {
+              await controller.register();
+            } catch (e) {
+              print('Error in register page: $e');
+            }
+          },
         ),
       ],
     );
@@ -173,20 +205,19 @@ class _RegisterPageState extends State<RegisterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: primaryTextStyle.copyWith(
-              color: txtPrimary,
-              fontSize: 14,
-              fontWeight: medium,
-            )),
+        Text(
+          label,
+          style: primaryTextStyle.copyWith(
+            color: txtPrimary,
+            fontSize: 14,
+            fontWeight: medium,
+          ),
+        ),
         const SizedBox(height: 10),
         Container(
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: primaryGreenColor,
-              ),
+              side: BorderSide(width: 1, color: primaryGreenColor),
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -201,8 +232,10 @@ class _RegisterPageState extends State<RegisterPage> {
               fontWeight: medium,
             ),
             decoration: const InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
               border: InputBorder.none,
             ),
           ),
@@ -220,12 +253,14 @@ class _RegisterPageState extends State<RegisterPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: primaryTextStyle.copyWith(
-              color: txtPrimary,
-              fontSize: 14,
-              fontWeight: medium,
-            )),
+        Text(
+          label,
+          style: primaryTextStyle.copyWith(
+            color: txtPrimary,
+            fontSize: 14,
+            fontWeight: medium,
+          ),
+        ),
         const SizedBox(height: 10),
         Container(
           decoration: ShapeDecoration(
@@ -234,31 +269,35 @@ class _RegisterPageState extends State<RegisterPage> {
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: Obx(() => TextField(
-                controller: controller,
-                onChanged: onChanged,
-                obscureText: !isPasswordVisible.value,
-                style: primaryTextStyle.copyWith(
-                  color: txtPrimary,
-                  fontSize: 14,
-                  fontWeight: medium,
+          child: Obx(
+            () => TextField(
+              controller: controller,
+              onChanged: onChanged,
+              obscureText: !isPasswordVisible.value,
+              style: primaryTextStyle.copyWith(
+                color: txtPrimary,
+                fontSize: 14,
+                fontWeight: medium,
+              ),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
                 ),
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  border: InputBorder.none,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPasswordVisible.value
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: txtPrimary,
-                    ),
-                    onPressed: () =>
-                        isPasswordVisible.value = !isPasswordVisible.value,
+                border: InputBorder.none,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPasswordVisible.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: txtPrimary,
                   ),
+                  onPressed: () =>
+                      isPasswordVisible.value = !isPasswordVisible.value,
                 ),
-              )),
+              ),
+            ),
+          ),
         ),
       ],
     );
