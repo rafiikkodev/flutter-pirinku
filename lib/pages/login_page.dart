@@ -108,7 +108,45 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 10),
                     CustomButton(
                       text: 'Masuk',
-                      onPressed: () => Get.toNamed('/homepage'),
+                      onPressed: () async {
+                        // Validate inputs first
+                        if (emailController.text.isEmpty ||
+                            passwordController.text.isEmpty) {
+                          Get.snackbar(
+                            'Error',
+                            'Email dan password harus diisi',
+                            backgroundColor: bgRedColor,
+                            colorText: txtWhite,
+                            snackPosition: SnackPosition.TOP,
+                          );
+                          return;
+                        }
+
+                        // Update controller values
+                        controller.email.value = emailController.text;
+                        controller.password.value = passwordController.text;
+
+                        // Attempt login
+                        try {
+                          await controller.login();
+
+                          // If login successful, clear the form
+                          if (controller.isLoggedIn) {
+                            emailController.clear();
+                            passwordController.clear();
+                          }
+                        } catch (e) {
+                          // If login fails, keep the form values for correction
+                          Get.snackbar(
+                            'Login Gagal',
+                            'Silakan periksa kembali email dan password Anda',
+                            backgroundColor: bgRedColor,
+                            colorText: txtWhite,
+                            snackPosition: SnackPosition.TOP,
+                            duration: const Duration(seconds: 3),
+                          );
+                        }
+                      },
                     ),
                     const SizedBox(height: 25),
                     _buildBottomText(),
@@ -146,10 +184,7 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: primaryGreenColor,
-              ),
+              side: BorderSide(width: 1, color: primaryGreenColor),
               borderRadius: BorderRadius.circular(8),
             ),
           ),
@@ -163,8 +198,10 @@ class _LoginPageState extends State<LoginPage> {
               fontWeight: medium,
             ),
             decoration: const InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 12,
+              ),
               border: InputBorder.none,
             ),
           ),
@@ -198,37 +235,38 @@ class _LoginPageState extends State<LoginPage> {
         Container(
           decoration: ShapeDecoration(
             shape: RoundedRectangleBorder(
-              side: BorderSide(
-                width: 1,
-                color: primaryGreenColor,
-              ),
+              side: BorderSide(width: 1, color: primaryGreenColor),
               borderRadius: BorderRadius.circular(8),
             ),
           ),
-          child: Obx(() => TextField(
-                controller: controller,
-                onChanged: onChanged,
-                obscureText: !isPasswordVisible.value,
-                style: primaryTextStyle.copyWith(
-                  color: txtPrimary,
-                  fontSize: 14,
-                  fontWeight: medium,
+          child: Obx(
+            () => TextField(
+              controller: controller,
+              onChanged: onChanged,
+              obscureText: !isPasswordVisible.value,
+              style: primaryTextStyle.copyWith(
+                color: txtPrimary,
+                fontSize: 14,
+                fontWeight: medium,
+              ),
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
                 ),
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  border: InputBorder.none,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      isPasswordVisible.value
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: txtPrimary,
-                    ),
-                    onPressed: onToggleVisibility,
+                border: InputBorder.none,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPasswordVisible.value
+                        ? Icons.visibility_off
+                        : Icons.visibility,
+                    color: txtPrimary,
                   ),
+                  onPressed: onToggleVisibility,
                 ),
-              )),
+              ),
+            ),
+          ),
         ),
       ],
     );
@@ -248,10 +286,7 @@ class _LoginPageState extends State<LoginPage> {
             const TextSpan(text: 'Belum punya akun? '),
             TextSpan(
               text: 'Buat akun',
-              style: TextStyle(
-                color: primaryGreenColor,
-                fontWeight: medium,
-              ),
+              style: TextStyle(color: primaryGreenColor, fontWeight: medium),
               recognizer: TapGestureRecognizer()
                 ..onTap = () => Get.offNamed('/register'),
             ),

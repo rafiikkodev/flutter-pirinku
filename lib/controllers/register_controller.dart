@@ -119,7 +119,9 @@ class RegisterController extends GetxController {
           errorMessage = 'Format email tidak valid';
           break;
         default:
-          errorMessage = 'Terjadi kesalahan: ${e.message}';
+          errorMessage = 'Terjadi kesalahan pada sistem';
+          // Log the actual error for debugging but don't show to user
+          print('Actual error: ${e.message}');
       }
 
       Get.snackbar(
