@@ -109,22 +109,59 @@ class _LoginPageState extends State<LoginPage> {
                     CustomButton(
                       text: 'Masuk',
                       onPressed: () async {
-                        // Validate inputs first
-                        if (emailController.text.isEmpty ||
-                            passwordController.text.isEmpty) {
+                        // Trim whitespace dan validate inputs
+                        String emailText = emailController.text.trim();
+                        String passwordText = passwordController.text.trim();
+
+                        // Validasi field kosong
+                        if (emailText.isEmpty && passwordText.isEmpty) {
                           Get.snackbar(
                             'Error',
                             'Email dan password harus diisi',
                             backgroundColor: bgRedColor,
                             colorText: txtWhite,
                             snackPosition: SnackPosition.TOP,
+                            duration: const Duration(seconds: 3),
+                          );
+                          return;
+                        } else if (emailText.isEmpty) {
+                          Get.snackbar(
+                            'Error',
+                            'Email harus diisi',
+                            backgroundColor: bgRedColor,
+                            colorText: txtWhite,
+                            snackPosition: SnackPosition.TOP,
+                            duration: const Duration(seconds: 3),
+                          );
+                          return;
+                        } else if (passwordText.isEmpty) {
+                          Get.snackbar(
+                            'Error',
+                            'Password harus diisi',
+                            backgroundColor: bgRedColor,
+                            colorText: txtWhite,
+                            snackPosition: SnackPosition.TOP,
+                            duration: const Duration(seconds: 3),
+                          );
+                          return;
+                        }
+
+                        // Validasi format email
+                        if (!GetUtils.isEmail(emailText)) {
+                          Get.snackbar(
+                            'Error',
+                            'Format email tidak valid',
+                            backgroundColor: bgRedColor,
+                            colorText: txtWhite,
+                            snackPosition: SnackPosition.TOP,
+                            duration: const Duration(seconds: 3),
                           );
                           return;
                         }
 
                         // Update controller values
-                        controller.email.value = emailController.text;
-                        controller.password.value = passwordController.text;
+                        controller.email.value = emailText;
+                        controller.password.value = passwordText;
 
                         // Attempt login
                         try {
@@ -136,15 +173,9 @@ class _LoginPageState extends State<LoginPage> {
                             passwordController.clear();
                           }
                         } catch (e) {
-                          // If login fails, keep the form values for correction
-                          Get.snackbar(
-                            'Login Gagal',
-                            'Silakan periksa kembali email dan password Anda',
-                            backgroundColor: bgRedColor,
-                            colorText: txtWhite,
-                            snackPosition: SnackPosition.TOP,
-                            duration: const Duration(seconds: 3),
-                          );
+                          // Error sudah ditangani di controller
+                          // Tidak perlu menampilkan snackbar lagi di sini
+                          print('Login error handled by controller: $e');
                         }
                       },
                     ),

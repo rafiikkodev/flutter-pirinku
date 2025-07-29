@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,13 +20,27 @@ class AuthController extends GetxController {
   Future<void> login() async {
     try {
       // Basic validation
-      if (email.value.isEmpty || password.value.isEmpty) {
+      if (email.value.trim().isEmpty || password.value.isEmpty) {
         Get.snackbar(
           'Error',
           'Email dan password harus diisi',
           backgroundColor: bgRedColor,
           colorText: txtWhite,
           snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
+        );
+        return;
+      }
+
+      // Email format validation
+      if (!GetUtils.isEmail(email.value.trim())) {
+        Get.snackbar(
+          'Error',
+          'Format email tidak valid',
+          backgroundColor: bgRedColor,
+          colorText: txtWhite,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
         );
         return;
       }
@@ -56,10 +71,30 @@ class AuthController extends GetxController {
 
       switch (e.code) {
         case 'user-not-found':
-          errorMessage = 'Email tidak terdaftar';
+          errorMessage =
+              'Email tidak terdaftar. Silakan daftar terlebih dahulu.';
+          // Show register option
+          Get.snackbar(
+            'Email Tidak Terdaftar',
+            errorMessage,
+            backgroundColor: bgRedColor,
+            colorText: txtWhite,
+            snackPosition: SnackPosition.TOP,
+            duration: const Duration(seconds: 4),
+            mainButton: TextButton(
+              onPressed: () {
+                Get.offNamed('/register');
+              },
+              child: Text(
+                'Daftar Sekarang',
+                style: TextStyle(color: txtWhite, fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
           break;
         case 'wrong-password':
-          errorMessage = 'Password salah';
+          errorMessage =
+              'Password salah. Silakan periksa kembali password Anda.';
           break;
         case 'invalid-email':
           errorMessage = 'Format email tidak valid';
@@ -67,18 +102,29 @@ class AuthController extends GetxController {
         case 'user-disabled':
           errorMessage = 'Akun telah dinonaktifkan';
           break;
+        case 'too-many-requests':
+          errorMessage = 'Terlalu banyak percobaan login. Coba lagi nanti.';
+          break;
+        case 'network-request-failed':
+          errorMessage = 'Koneksi internet bermasalah. Periksa koneksi Anda.';
+          break;
         default:
-          errorMessage = 'Terjadi kesalahan: ${e.message}';
+          errorMessage = 'Terjadi kesalahan';
+          // Log the actual error for debugging but don't show to user
+          print('Firebase Auth Error: ${e.code} - ${e.message}');
       }
 
-      Get.snackbar(
-        'Error',
-        errorMessage,
-        backgroundColor: bgRedColor,
-        colorText: txtWhite,
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
-      );
+      if (e.code != 'user-not-found') {
+        Get.snackbar(
+          'Login Gagal',
+          errorMessage,
+          backgroundColor: bgRedColor,
+          colorText: txtWhite,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
+        );
+      }
+
       throw e; // Re-throw to handle in the UI
     } catch (e) {
       _isLoggedIn.value = false;
