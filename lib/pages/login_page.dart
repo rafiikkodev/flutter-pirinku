@@ -167,10 +167,11 @@ class _LoginPageState extends State<LoginPage> {
                         try {
                           await controller.login();
 
-                          // If login successful, clear the form
+                          // If login successful, clear the form and navigate to beranda
                           if (controller.isLoggedIn) {
                             emailController.clear();
                             passwordController.clear();
+                            Get.offAllNamed('/beranda');
                           }
                         } catch (e) {
                           // Error sudah ditangani di controller

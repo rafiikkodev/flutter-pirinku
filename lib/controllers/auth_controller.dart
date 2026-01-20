@@ -64,7 +64,7 @@ class AuthController extends GetxController {
 
       // Add slight delay before navigation
       await Future.delayed(const Duration(seconds: 2));
-      Get.offAllNamed('/homepage');
+      Get.offAllNamed('/beranda');
     } on FirebaseAuthException catch (e) {
       _isLoggedIn.value = false;
       String errorMessage = '';
