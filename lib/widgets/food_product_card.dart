@@ -1,71 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
 
-class ScheduleCard extends StatelessWidget {
-  final String time; // Format: "HH:mm" atau "HH.mm"
-  final String message;
+class FoodProductCard extends StatelessWidget {
   final String? imageUrl;
+  final String name;
+  final String price;
   final VoidCallback? onTap;
 
-  const ScheduleCard({
+  const FoodProductCard({
     Key? key,
-    required this.time,
-    required this.message,
     this.imageUrl,
+    required this.name,
+    required this.price,
     this.onTap,
   }) : super(key: key);
 
-  bool _isApproaching() {
-    try {
-      // Parse time string (support both "09:00" and "09.00" format)
-      final cleanTime = time.replaceAll('.', ':');
-      final timeParts = cleanTime.split(':');
-
-      if (timeParts.length != 2) return false;
-
-      final hour = int.parse(timeParts[0]);
-      final minute = int.parse(timeParts[1]);
-
-      final now = DateTime.now();
-      final scheduleTime = DateTime(now.year, now.month, now.day, hour, minute);
-
-      // Check if schedule time is in the future
-      if (scheduleTime.isBefore(now)) {
-        return false;
-      }
-
-      // Check if within 1 hour (60 minutes)
-      final difference = scheduleTime.difference(now);
-      return difference.inMinutes <= 60 && difference.inMinutes >= 0;
-    } catch (e) {
-      return false;
-    }
-  }
-
-  Color _getBackgroundColor() {
-    return _isApproaching() ? primaryGreenColor : txtSecondary;
-  }
-
-  Color _getTextColor() {
-    return _isApproaching() ? txtWhite : txtPrimary;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isActive = _isApproaching();
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 149,
+        width: 206,
+        padding: const EdgeInsets.all(10),
         decoration: ShapeDecoration(
-          color: _getBackgroundColor(),
+          color: lightBackgroundColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           shadows: const [
             BoxShadow(
               color: Color(0x19000000),
               blurRadius: 24,
-              offset: Offset(0, 4),
+              offset: Offset(0, -4),
               spreadRadius: 0,
             ),
           ],
@@ -73,13 +37,12 @@ class ScheduleCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 8),
             // Image
             Container(
-              width: 100,
-              height: 100,
+              width: 186,
+              height: 132,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: txtSecondary,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: imageUrl != null
@@ -90,45 +53,45 @@ class ScheduleCard extends StatelessWidget {
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                           return Container(
-                            color: Colors.grey[300],
+                            color: txtSecondary,
                             child: Icon(
                               Icons.restaurant,
                               size: 40,
-                              color: Colors.grey[500],
+                              color: Colors.grey[400],
                             ),
                           );
                         },
                       ),
                     )
-                  : Icon(Icons.restaurant, size: 40, color: Colors.grey[500]),
+                  : Icon(Icons.restaurant, size: 40, color: Colors.grey[400]),
             ),
+            const SizedBox(height: 12),
             // Content
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            SizedBox(
+              width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    time,
+                    name,
                     style: TextStyle(
-                      color: _getTextColor(),
+                      color: txtPrimary,
                       fontSize: 16,
                       fontFamily: 'Visby Round CF',
-                      fontWeight: semiBold,
+                      fontWeight: medium,
+                      height: 0.88,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    message,
+                    price,
                     style: TextStyle(
-                      color: _getTextColor(),
-                      fontSize: 13,
+                      color: txtPrimary,
+                      fontSize: 12,
                       fontFamily: 'Visby Round CF',
                       fontWeight: medium,
-                      height: 1.2,
+                      height: 1.17,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),

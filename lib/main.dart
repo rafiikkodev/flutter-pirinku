@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/pages/cooking_tool_page.dart';
-import 'package:flutter_pirinku/pages/home_page.dart';
+import 'package:flutter_pirinku/pages/beranda_page.dart';
 import 'package:flutter_pirinku/pages/splash_page.dart';
 import 'package:flutter_pirinku/pages/onboarding_page.dart';
 import 'package:flutter_pirinku/pages/register_page.dart';
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/register', page: () => const RegisterPage()),
         GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/cookingtool', page: () => const CookingToolPage()),
-        GetPage(name: '/homepage', page: () => const HomePage()),
+        GetPage(name: '/beranda', page: () => const BerandaPage()),
       ],
     );
   }
