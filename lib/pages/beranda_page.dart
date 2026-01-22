@@ -3,6 +3,7 @@ import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
 import 'package:flutter_pirinku/widgets/menu_icon.dart';
 import 'package:flutter_pirinku/widgets/schedule_card.dart';
 import 'package:flutter_pirinku/widgets/food_product_card.dart';
+import 'package:get/get.dart';
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key}) : super(key: key);
@@ -417,7 +418,24 @@ class _BerandaPageState extends State<BerandaPage> {
 
   Widget _buildNavItem(IconData icon, String label, bool isActive) {
     return GestureDetector(
-      onTap: () => print(label),
+      onTap: () {
+        if (isActive) return; // Don't navigate if already on this page
+
+        switch (label) {
+          case 'Beranda':
+            // Already on Beranda
+            break;
+          case 'Jadwal':
+            Get.toNamed('/jadwal');
+            break;
+          case 'Warung':
+            Get.toNamed('/warung');
+            break;
+          case 'Media':
+            Get.toNamed('/media');
+            break;
+        }
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
