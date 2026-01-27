@@ -135,16 +135,9 @@ class _SchedulePageState extends State<SchedulePage> {
     return Scaffold(
       backgroundColor: bgWhite,
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20.0),
-                child: isSaved ? _buildSavedView() : _buildEditView(),
-              ),
-            ),
-            _buildBottomNavigation(),
-          ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: isSaved ? _buildSavedView() : _buildEditView(),
         ),
       ),
     );
@@ -574,81 +567,6 @@ class _SchedulePageState extends State<SchedulePage> {
           }).toList(),
         ),
       ],
-    );
-  }
-
-  Widget _buildBottomNavigation() {
-    return Container(
-      decoration: BoxDecoration(
-        color: bgWhite,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.home_outlined, 'Beranda', false, '/beranda'),
-              _buildNavItem(
-                Icons.calendar_today_outlined,
-                'Jadwal',
-                true,
-                '/jadwal',
-              ),
-              _buildNavItem(Icons.store_outlined, 'Warung', false, '/warung'),
-              _buildNavItem(
-                Icons.video_library_outlined,
-                'Media',
-                false,
-                '/media',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-    IconData icon,
-    String label,
-    bool isActive,
-    String route,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        if (!isActive) {
-          Get.toNamed(route);
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? primaryGreenColor : txtSecondary,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Visby Round CF',
-              fontSize: 12,
-              color: isActive ? primaryGreenColor : txtSecondary,
-              fontWeight: isActive ? semiBold : regular,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

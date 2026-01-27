@@ -3,7 +3,6 @@ import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
 import 'package:flutter_pirinku/widgets/menu_icon.dart';
 import 'package:flutter_pirinku/widgets/schedule_card.dart';
 import 'package:flutter_pirinku/widgets/food_product_card.dart';
-import 'package:get/get.dart';
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key}) : super(key: key);
@@ -67,16 +66,8 @@ class _BerandaPageState extends State<BerandaPage> {
             // Floating Chat Button
             Positioned(
               right: 16,
-              bottom: 115,
+              bottom: 16,
               child: _buildFloatingChatButton(),
-            ),
-
-            // Bottom Navigation
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: _buildBottomNavigation(),
             ),
           ],
         ),
@@ -386,75 +377,6 @@ class _BerandaPageState extends State<BerandaPage> {
           ],
         ),
         child: Icon(Icons.chat_bubble, color: txtWhite, size: 32),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigation() {
-    return Container(
-      height: 83,
-      decoration: BoxDecoration(
-        color: lightBackgroundColor,
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x19000000),
-            blurRadius: 24,
-            offset: Offset(0, -4),
-            spreadRadius: 0,
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildNavItem(Icons.home, 'Beranda', true),
-          _buildNavItem(Icons.calendar_today, 'Jadwal', false),
-          _buildNavItem(Icons.store, 'Warung', false),
-          _buildNavItem(Icons.person, 'Media', false),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isActive) {
-    return GestureDetector(
-      onTap: () {
-        if (isActive) return; // Don't navigate if already on this page
-
-        switch (label) {
-          case 'Beranda':
-            // Already on Beranda
-            break;
-          case 'Jadwal':
-            Get.toNamed('/jadwal');
-            break;
-          case 'Warung':
-            Get.toNamed('/warung');
-            break;
-          case 'Media':
-            Get.toNamed('/media');
-            break;
-        }
-      },
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? thirtyGreenColor : txtSecondary,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              color: isActive ? thirtyGreenColor : txtSecondary,
-              fontSize: 12,
-              fontFamily: 'Visby Round CF',
-              fontWeight: isActive ? bold : medium,
-            ),
-          ),
-        ],
       ),
     );
   }
