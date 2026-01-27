@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/pages/cooking_tool_page.dart';
-import 'package:flutter_pirinku/pages/beranda_page.dart';
 import 'package:flutter_pirinku/pages/splash_page.dart';
 import 'package:flutter_pirinku/pages/onboarding_page.dart';
 import 'package:flutter_pirinku/pages/register_page.dart';
 import 'package:flutter_pirinku/pages/login_page.dart';
-import 'package:flutter_pirinku/pages/schedule_page.dart';
 import 'package:flutter_pirinku/pages/jadwal_makanku_page.dart';
+import 'package:flutter_pirinku/widgets/main_navigation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/services.dart';
@@ -37,20 +36,26 @@ class MyApp extends StatelessWidget {
         GetPage(name: '/register', page: () => const RegisterPage()),
         GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/cookingtool', page: () => const CookingToolPage()),
-        GetPage(name: '/beranda', page: () => const BerandaPage()),
-        GetPage(name: '/jadwal', page: () => const SchedulePage()),
+        GetPage(
+          name: '/home',
+          page: () => const MainNavigation(initialIndex: 0),
+        ),
+        GetPage(
+          name: '/beranda',
+          page: () => const MainNavigation(initialIndex: 0),
+        ),
+        GetPage(
+          name: '/jadwal',
+          page: () => const MainNavigation(initialIndex: 1),
+        ),
         GetPage(name: '/jadwal-makanku', page: () => const JadwalMakankuPage()),
         GetPage(
           name: '/warung',
-          page: () => const Scaffold(
-            body: Center(child: Text('Halaman Warung - Coming Soon')),
-          ),
+          page: () => const MainNavigation(initialIndex: 2),
         ),
         GetPage(
           name: '/media',
-          page: () => const Scaffold(
-            body: Center(child: Text('Halaman Media - Coming Soon')),
-          ),
+          page: () => const MainNavigation(initialIndex: 3),
         ),
       ],
     );
