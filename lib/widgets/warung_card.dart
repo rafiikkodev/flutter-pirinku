@@ -43,33 +43,36 @@ class WarungCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Image Container
-            Container(
-              width: double.infinity,
-              height: 147,
-              decoration: ShapeDecoration(
-                color: txtSecondary,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    topRight: Radius.circular(8),
+            // Image Container - Flexible to fill available space
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                decoration: ShapeDecoration(
+                  color: txtSecondary,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                    ),
                   ),
                 ),
+                child: imageUrl != null
+                    ? Image.network(
+                        imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const SizedBox(),
+                      )
+                    : null,
               ),
-              child: imageUrl != null
-                  ? Image.network(
-                      imageUrl!,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const SizedBox(),
-                    )
-                  : null,
             ),
-            // Content
+            // Content - Fixed size
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -81,6 +84,8 @@ class WarungCard extends StatelessWidget {
                       fontWeight: semiBold,
                       height: 1.43,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Row(

@@ -15,6 +15,8 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
   int selectedDateIndex = 2; // Today is selected by default
   List<Map<String, String>> dates = [];
   String currentYear = '';
+  int? selectedMealIndex; // Tracks which meal card is selected
+  Set<int> editedMeals = {}; // Tracks which meals have been edited
 
   @override
   void initState() {
@@ -150,6 +152,7 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
                   height: 81,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     itemCount: dates.length,
                     itemBuilder: (context, index) {
@@ -242,54 +245,55 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
               ],
             ),
 
-            // Save Button (Floating)
-            Positioned(
-              left: 16,
-              right: 16,
-              bottom: 100,
-              child: Container(
-                height: 48,
-                decoration: BoxDecoration(
-                  color: primaryGreenColor,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0x19000000),
-                      blurRadius: 24,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.snackbar(
-                      'Berhasil',
-                      'Jadwal makan berhasil disimpan!',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: primaryGreenColor,
-                      colorText: txtWhite,
-                      margin: const EdgeInsets.all(16),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryGreenColor,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
+            // Save Button (Floating) - Only show when no card is selected
+            if (selectedMealIndex == null)
+              Positioned(
+                left: 16,
+                right: 16,
+                bottom: 100,
+                child: Container(
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: primaryGreenColor,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0x19000000),
+                        blurRadius: 24,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    'Simpan',
-                    style: TextStyle(
-                      fontFamily: 'Visby Round CF',
-                      fontSize: 14,
-                      fontWeight: semiBold,
-                      color: txtWhite,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Get.snackbar(
+                        'Berhasil',
+                        'Jadwal makan berhasil disimpan!',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: primaryGreenColor,
+                        colorText: txtWhite,
+                        margin: const EdgeInsets.all(16),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryGreenColor,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Simpan',
+                      style: TextStyle(
+                        fontFamily: 'Visby Round CF',
+                        fontSize: 14,
+                        fontWeight: semiBold,
+                        color: txtWhite,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
 
             // Bottom Navigation
             Positioned(
@@ -371,118 +375,150 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
   }
 
   Widget _buildMealItem(Map<String, dynamic> item, int index) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-      decoration: BoxDecoration(
-        border: Border.all(color: primaryGreenColor),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x19000000),
-            blurRadius: 24,
-            offset: const Offset(0, -4),
-          ),
-        ],
-        color: bgWhite,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                item['title'],
-                style: TextStyle(
-                  fontFamily: 'Visby Round CF',
-                  fontSize: 16,
-                  fontWeight: semiBold,
-                  color: txtPrimary,
-                ),
-              ),
-              Container(
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEDEDED),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(
-                  Icons.delete_outline,
-                  size: 16,
-                  color: txtSecondary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 5),
-          Text(
-            item['recipe'],
-            style: TextStyle(
-              fontFamily: 'Visby Round CF',
-              fontSize: 16,
-              fontWeight: semiBold,
-              color: txtPrimary,
+    final isSelected = selectedMealIndex == index;
+    final isEdited = editedMeals.contains(index);
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          // Toggle selection
+          if (selectedMealIndex == index) {
+            selectedMealIndex = null;
+          } else {
+            selectedMealIndex = index;
+          }
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+        decoration: BoxDecoration(
+          border: Border.all(color: primaryGreenColor),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0x19000000),
+              blurRadius: 24,
+              offset: const Offset(0, -4),
             ),
-          ),
-          const SizedBox(height: 5),
-          Row(
-            children: [
-              Icon(Icons.attach_money, size: 14, color: txtPrimary),
-              const SizedBox(width: 5),
-              Text(
-                item['price'],
-                style: TextStyle(
-                  fontFamily: 'Visby Round CF',
-                  fontSize: 14,
-                  fontWeight: medium,
-                  color: txtPrimary,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Icon(Icons.access_time, size: 16, color: txtPrimary),
-              const SizedBox(width: 5),
-              Text(
-                item['time'],
-                style: TextStyle(
-                  fontFamily: 'Visby Round CF',
-                  fontSize: 14,
-                  fontWeight: medium,
-                  color: txtPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          InkWell(
-            onTap: () {
-              _showChangeRecipeDialog(index);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              decoration: BoxDecoration(
-                color: primaryGreenColor,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.edit, size: 20, color: txtWhite),
-                  const SizedBox(width: 6),
-                  Text(
-                    'Ubah Resep',
-                    style: TextStyle(
-                      fontFamily: 'Visby Round CF',
-                      fontSize: 14,
-                      fontWeight: medium,
-                      color: txtWhite,
-                    ),
+          ],
+          color: bgWhite,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  item['title'],
+                  style: TextStyle(
+                    fontFamily: 'Visby Round CF',
+                    fontSize: 16,
+                    fontWeight: semiBold,
+                    color: txtPrimary,
                   ),
-                ],
+                ),
+                Container(
+                  width: 26,
+                  height: 26,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEDEDED),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Icon(
+                    Icons.delete_outline,
+                    size: 16,
+                    color: txtSecondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 5),
+            Text(
+              item['recipe'],
+              style: TextStyle(
+                fontFamily: 'Visby Round CF',
+                fontSize: 16,
+                fontWeight: semiBold,
+                color: txtPrimary,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 5),
+            Row(
+              children: [
+                Icon(Icons.attach_money, size: 14, color: txtPrimary),
+                const SizedBox(width: 5),
+                Text(
+                  item['price'],
+                  style: TextStyle(
+                    fontFamily: 'Visby Round CF',
+                    fontSize: 14,
+                    fontWeight: medium,
+                    color: txtPrimary,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Icon(Icons.access_time, size: 16, color: txtPrimary),
+                const SizedBox(width: 5),
+                Text(
+                  item['time'],
+                  style: TextStyle(
+                    fontFamily: 'Visby Round CF',
+                    fontSize: 14,
+                    fontWeight: medium,
+                    color: txtPrimary,
+                  ),
+                ),
+              ],
+            ),
+
+            // Only show button when card is selected
+            if (isSelected) ...[
+              const SizedBox(height: 10),
+              InkWell(
+                onTap: () {
+                  if (isEdited) {
+                    // Show recipe details
+                    _showRecipeDetailsDialog(index);
+                  } else {
+                    // Show edit recipe modal
+                    _showChangeRecipeDialog(index);
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: primaryGreenColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        isEdited ? Icons.visibility : Icons.edit,
+                        size: 20,
+                        color: txtWhite,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        isEdited ? 'Lihat Resep' : 'Ubah Resep',
+                        style: TextStyle(
+                          fontFamily: 'Visby Round CF',
+                          fontSize: 14,
+                          fontWeight: medium,
+                          color: txtWhite,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -546,6 +582,10 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
               setState(() {
                 mealSchedule[index]['recipe'] = recipeController.text;
                 mealSchedule[index]['price'] = 'Rp${priceController.text}';
+                // Mark this meal as edited
+                editedMeals.add(index);
+                // Deselect the card
+                selectedMealIndex = null;
               });
               Navigator.pop(context);
               Get.snackbar(
@@ -559,6 +599,70 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
             },
             style: ElevatedButton.styleFrom(backgroundColor: primaryGreenColor),
             child: Text('Simpan', style: TextStyle(color: txtWhite)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRecipeDetailsDialog(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          'Detail Resep',
+          style: TextStyle(fontFamily: 'Visby Round CF', fontWeight: semiBold),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Nama Resep',
+              style: TextStyle(
+                fontFamily: 'Visby Round CF',
+                fontSize: 12,
+                fontWeight: medium,
+                color: txtSecondary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              mealSchedule[index]['recipe'],
+              style: TextStyle(
+                fontFamily: 'Visby Round CF',
+                fontSize: 16,
+                fontWeight: semiBold,
+                color: txtPrimary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Harga',
+              style: TextStyle(
+                fontFamily: 'Visby Round CF',
+                fontSize: 12,
+                fontWeight: medium,
+                color: txtSecondary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              mealSchedule[index]['price'],
+              style: TextStyle(
+                fontFamily: 'Visby Round CF',
+                fontSize: 16,
+                fontWeight: semiBold,
+                color: txtPrimary,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ElevatedButton.styleFrom(backgroundColor: primaryGreenColor),
+            child: Text('Tutup', style: TextStyle(color: txtWhite)),
           ),
         ],
       ),
