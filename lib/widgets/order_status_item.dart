@@ -1,19 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class OrderStatusItem extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? svgIcon;
   final String label;
   final bool hasNotification;
   final VoidCallback? onTap;
 
   const OrderStatusItem({
     super.key,
-    required this.icon,
+    this.icon,
+    this.svgIcon,
     required this.label,
     this.hasNotification = false,
     this.onTap,
-  });
+  }) : assert(
+         icon != null || svgIcon != null,
+         'Either icon or svgIcon must be provided',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +35,18 @@ class OrderStatusItem extends StatelessWidget {
               height: 28,
               child: Stack(
                 children: [
-                  Icon(icon, size: 28, color: txtPrimary),
+                  if (svgIcon != null)
+                    SvgPicture.asset(
+                      svgIcon!,
+                      width: 28,
+                      height: 28,
+                      colorFilter: ColorFilter.mode(
+                        txtPrimary,
+                        BlendMode.srcIn,
+                      ),
+                    )
+                  else if (icon != null)
+                    Icon(icon, size: 28, color: txtPrimary),
                   if (hasNotification)
                     Positioned(
                       right: 0,

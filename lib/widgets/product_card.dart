@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
+import 'package:flutter_svg/svg.dart';
 
 // Card 3/4: Product Card
 class ProductCard extends StatelessWidget {
@@ -34,9 +35,9 @@ class ProductCard extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           shadows: const [
             BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 24,
-              offset: Offset(0, 4),
+              color: Color(0x0D000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
               spreadRadius: 0,
             ),
           ],
@@ -116,7 +117,12 @@ class ProductCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                  child: Icon(Icons.add, color: txtWhite, size: 15),
+                  child: SvgPicture.asset(
+                    'assets/warung/troli.svg',
+                    width: 15,
+                    height: 15,
+                    colorFilter: ColorFilter.mode(txtWhite, BlendMode.srcIn),
+                  ),
                 ),
               ),
             ),

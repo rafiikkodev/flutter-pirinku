@@ -6,6 +6,8 @@ import 'package:flutter_pirinku/widgets/category_icon.dart';
 import 'package:flutter_pirinku/widgets/product_card.dart';
 import 'package:flutter_pirinku/widgets/warung_card.dart';
 import 'package:flutter_pirinku/pages/product_detail_page.dart';
+import 'package:flutter_pirinku/pages/warung_detail_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class WarungPage extends StatefulWidget {
   const WarungPage({super.key});
@@ -17,11 +19,11 @@ class WarungPage extends StatefulWidget {
 class _WarungPageState extends State<WarungPage> {
   // Sample data for categories
   final List<Map<String, String?>> categories = [
-    {'image': null, 'label': 'Sayuran'},
-    {'image': null, 'label': 'Karbo'},
-    {'image': null, 'label': 'Bumbu'},
-    {'image': null, 'label': 'Protein'},
-    {'image': null, 'label': 'Cepat Saji'},
+    {'image': 'assets/warung/sayuran.png', 'label': 'Sayuran'},
+    {'image': 'assets/warung/karbo.png', 'label': 'Karbo'},
+    {'image': 'assets/warung/bumbu.png', 'label': 'Bumbu'},
+    {'image': 'assets/warung/protein.png', 'label': 'Protein'},
+    {'image': 'assets/warung/cepat saji.png', 'label': 'Cepat Saji'},
   ];
 
   // Sample data for popular products
@@ -135,10 +137,11 @@ class _WarungPageState extends State<WarungPage> {
               onPressed: () {
                 // Handle location
               },
-              icon: Icon(
-                Icons.location_on_outlined,
-                size: 24,
-                color: txtPrimary,
+              icon: SvgPicture.asset(
+                'assets/warung/lokasi.svg',
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(txtPrimary, BlendMode.srcIn),
               ),
             ),
             const SizedBox(width: 6),
@@ -146,10 +149,11 @@ class _WarungPageState extends State<WarungPage> {
               onPressed: () {
                 // Handle cart
               },
-              icon: Icon(
-                Icons.shopping_cart_outlined,
-                size: 24,
-                color: txtPrimary,
+              icon: SvgPicture.asset(
+                'assets/warung/troli.svg',
+                width: 24,
+                height: 24,
+                colorFilter: ColorFilter.mode(txtPrimary, BlendMode.srcIn),
               ),
             ),
           ],
@@ -163,21 +167,21 @@ class _WarungPageState extends State<WarungPage> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         OrderStatusItem(
-          icon: Icons.payment_outlined,
+          svgIcon: 'assets/warung/belum bayar.svg',
           label: 'Belum Bayar',
           onTap: () {
             // Handle belum bayar
           },
         ),
         OrderStatusItem(
-          icon: Icons.inventory_2_outlined,
+          svgIcon: 'assets/warung/dikemas.svg',
           label: 'Dikemas',
           onTap: () {
             // Handle dikemas
           },
         ),
         OrderStatusItem(
-          icon: Icons.local_shipping_outlined,
+          svgIcon: 'assets/warung/dikirim.svg',
           label: 'Dikirim',
           hasNotification: true,
           onTap: () {
@@ -185,7 +189,7 @@ class _WarungPageState extends State<WarungPage> {
           },
         ),
         OrderStatusItem(
-          icon: Icons.star_outline,
+          svgIcon: 'assets/warung/beri nilai.svg',
           label: 'Beri Nilai',
           onTap: () {
             // Handle beri nilai
@@ -218,7 +222,15 @@ class _WarungPageState extends State<WarungPage> {
             imageUrl: category['image'],
             label: category['label'] ?? '',
             onTap: () {
-              // Navigate to category page
+              // Show feedback when category is tapped
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Kategori ${category['label']} dipilih'),
+                  duration: const Duration(seconds: 1),
+                  backgroundColor: primaryGreenColor,
+                ),
+              );
+              // TODO: Navigate to category page with filtered products
             },
           );
         },
@@ -365,6 +377,15 @@ class _WarungPageState extends State<WarungPage> {
                   closingTime: store['closingTime'],
                   onTap: () {
                     // Navigate to store detail
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => WarungDetailPage(
+                          imageUrl: store['image'],
+                          name: store['name'],
+                        ),
+                      ),
+                    );
                   },
                 ),
               );

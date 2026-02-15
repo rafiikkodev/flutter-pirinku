@@ -3,6 +3,7 @@ import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
 
 class FoodProductCard extends StatelessWidget {
   final String? imageUrl;
+  final String? imageAsset;
   final String name;
   final String price;
   final VoidCallback? onTap;
@@ -10,6 +11,7 @@ class FoodProductCard extends StatelessWidget {
   const FoodProductCard({
     Key? key,
     this.imageUrl,
+    this.imageAsset,
     required this.name,
     required this.price,
     this.onTap,
@@ -27,9 +29,9 @@ class FoodProductCard extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           shadows: const [
             BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 24,
-              offset: Offset(0, -4),
+              color: Color(0x0D000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
               spreadRadius: 0,
             ),
           ],
@@ -45,7 +47,15 @@ class FoodProductCard extends StatelessWidget {
                 color: txtSecondary,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: imageUrl != null
+              child: imageAsset != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        'assets/$imageAsset',
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : imageUrl != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(

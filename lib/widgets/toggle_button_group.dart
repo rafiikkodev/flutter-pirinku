@@ -67,12 +67,13 @@ class _ToggleButtonGroupState extends State<ToggleButtonGroup> {
         child: Center(
           child: Text(
             label,
+            textAlign: TextAlign.center,
             style: TextStyle(
               color: isSelected ? txtWhite : txtPrimary,
               fontSize: 14,
               fontFamily: 'Visby Round CF',
               fontWeight: medium,
-              height: 1.43,
+              height: 1.0,
             ),
           ),
         ),
