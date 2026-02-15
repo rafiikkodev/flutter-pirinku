@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 final bgWhite = const Color(0xFFFFFFFF);
@@ -12,25 +13,47 @@ class JadwalMakankuPage extends StatefulWidget {
 }
 
 class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
-  int selectedDateIndex = 2; // Today is selected by default
-  List<Map<String, String>> dates = [];
+  int selectedDateIndex =
+      15; // Today is selected by default (middle of 31 dates)
+  List<Map<String, dynamic>> dates = [];
   String currentYear = '';
   int? selectedMealIndex; // Tracks which meal card is selected
   Set<int> editedMeals = {}; // Tracks which meals have been edited
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _generateDates();
+    // Initialize meal schedule for today
+    mealSchedule = _getMealScheduleForDate(selectedDateIndex);
+    // Auto scroll to today after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        // Calculate position: each card is 63 width + 10 margin = 73 pixels
+        final position = (selectedDateIndex - 2) * 73.0;
+        _scrollController.animateTo(
+          position,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _generateDates() {
     final now = DateTime.now();
     currentYear = now.year.toString();
 
-    // Generate 5 dates: 2 days before today, today, 2 days after today
+    // Generate dates: 15 days before today, today, 15 days after today (total 31 days)
     dates.clear();
-    for (int i = -2; i <= 2; i++) {
+    for (int i = -15; i <= 15; i++) {
       final date = now.add(Duration(days: i));
       final months = [
         'Jan',
@@ -50,9 +73,11 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
         'month': months[date.month - 1],
         'day': date.day.toString().padLeft(2, '0'),
         'dayName': _getDayName(date.weekday),
+        'year': date.year.toString(),
+        'fullDate': date, // Store full DateTime for accurate tracking
       });
     }
-    selectedDateIndex = 2; // Today is in the middle
+    selectedDateIndex = 15; // Today is in the middle
   }
 
   String _getDayName(int weekday) {
@@ -76,231 +101,234 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
     }
   }
 
-  final List<Map<String, dynamic>> mealSchedule = [
-    {'type': 'water', 'title': 'Minum Air Putih', 'time': '08.00'},
-    {'type': 'water', 'title': 'Minum Air Putih', 'time': '09.00'},
-    {
-      'type': 'meal',
-      'title': 'Sarapan',
-      'recipe': 'Ayam Goreng Sambel Ijo',
-      'price': 'Rp12.000',
-      'time': '09.40',
-    },
-    {'type': 'water', 'title': 'Minum Air Putih', 'time': '11.00'},
-    {'type': 'water', 'title': 'Minum Air Putih', 'time': '13.00'},
-  ];
+  List<Map<String, dynamic>> _getMealScheduleForDate(int dateIndex) {
+    // Generate different meal schedule based on date index (dummy data)
+    final baseSchedules = [
+      [
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '08.00'},
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '09.00'},
+        {
+          'type': 'meal',
+          'title': 'Sarapan',
+          'recipe': 'Ayam Goreng Sambel Ijo',
+          'price': 'Rp12.000',
+          'time': '09.40',
+        },
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '11.00'},
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '13.00'},
+      ],
+      [
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '07.30'},
+        {
+          'type': 'meal',
+          'title': 'Sarapan',
+          'recipe': 'Nasi Goreng Spesial',
+          'price': 'Rp15.000',
+          'time': '08.30',
+        },
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '10.00'},
+        {
+          'type': 'meal',
+          'title': 'Makan Siang',
+          'recipe': 'Soto Ayam',
+          'price': 'Rp18.000',
+          'time': '12.30',
+        },
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '15.00'},
+      ],
+      [
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '07.00'},
+        {
+          'type': 'meal',
+          'title': 'Sarapan',
+          'recipe': 'Bubur Ayam',
+          'price': 'Rp10.000',
+          'time': '08.00',
+        },
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '10.30'},
+        {
+          'type': 'meal',
+          'title': 'Makan Siang',
+          'recipe': 'Nasi Padang',
+          'price': 'Rp20.000',
+          'time': '13.00',
+        },
+        {'type': 'water', 'title': 'Minum Air Putih', 'time': '16.00'},
+        {
+          'type': 'meal',
+          'title': 'Makan Malam',
+          'recipe': 'Gado-gado',
+          'price': 'Rp14.000',
+          'time': '19.00',
+        },
+      ],
+    ];
+
+    // Use modulo to cycle through different schedules
+    return baseSchedules[dateIndex % baseSchedules.length];
+  }
+
+  List<Map<String, dynamic>> mealSchedule = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgWhite,
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Column(
-              children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Get.back(),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(Icons.arrow_back, color: txtPrimary),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Jadwal Makanku',
-                        style: TextStyle(
-                          fontFamily: 'Visby Round CF',
-                          fontSize: 22,
-                          fontWeight: semiBold,
-                          color: txtPrimary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Year
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      currentYear,
-                      style: TextStyle(
-                        fontFamily: 'Visby Round CF',
-                        fontSize: 22,
-                        fontWeight: semiBold,
-                        color: txtPrimary,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-
-                // Date Selector (Horizontal Scroll)
-                SizedBox(
-                  height: 81,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: const BouncingScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    itemCount: dates.length,
-                    itemBuilder: (context, index) {
-                      final date = dates[index];
-                      final isSelected = index == selectedDateIndex;
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedDateIndex = index;
-                          });
-                        },
-                        child: Container(
-                          width: 63,
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? primaryGreenColor
-                                : const Color(0xFFCAEDD9),
-                            borderRadius: BorderRadius.circular(10),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0x19000000),
-                                blurRadius: 24,
-                                offset: const Offset(0, -4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                date['month']!,
-                                style: TextStyle(
-                                  fontFamily: 'Visby Round CF',
-                                  fontSize: 12,
-                                  fontWeight: bold,
-                                  color: txtWhite,
-                                ),
-                              ),
-                              Text(
-                                date['day']!,
-                                style: TextStyle(
-                                  fontFamily: 'Visby Round CF',
-                                  fontSize: 18,
-                                  fontWeight: bold,
-                                  color: txtWhite,
-                                ),
-                              ),
-                              Text(
-                                date['dayName']!,
-                                style: TextStyle(
-                                  fontFamily: 'Visby Round CF',
-                                  fontSize: 12,
-                                  fontWeight: bold,
-                                  color: txtWhite,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 25),
-
-                // Meal Schedule List (Vertical Scroll)
-                Expanded(
-                  child: ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: mealSchedule.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 15),
-                    itemBuilder: (context, index) {
-                      final item = mealSchedule[index];
-                      if (item['type'] == 'water') {
-                        return _buildWaterItem(item);
-                      } else {
-                        return _buildMealItem(item, index);
-                      }
-                    },
-                  ),
-                ),
-                const SizedBox(height: 80), // Space for save button and nav
-              ],
-            ),
-
-            // Save Button (Floating) - Only show when no card is selected
-            if (selectedMealIndex == null)
-              Positioned(
-                left: 16,
-                right: 16,
-                bottom: 100,
-                child: Container(
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: primaryGreenColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0x19000000),
-                        blurRadius: 24,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.snackbar(
-                        'Berhasil',
-                        'Jadwal makan berhasil disimpan!',
-                        snackPosition: SnackPosition.BOTTOM,
-                        backgroundColor: primaryGreenColor,
-                        colorText: txtWhite,
-                        margin: const EdgeInsets.all(16),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryGreenColor,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
+            // Header
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                      child: Icon(Icons.arrow_back, color: txtPrimary),
                     ),
-                    child: Text(
-                      'Simpan',
-                      style: TextStyle(
-                        fontFamily: 'Visby Round CF',
-                        fontSize: 14,
-                        fontWeight: semiBold,
-                        color: txtWhite,
-                      ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Jadwal Makanku',
+                    style: TextStyle(
+                      fontFamily: 'Visby Round CF',
+                      fontSize: 22,
+                      fontWeight: semiBold,
+                      color: txtPrimary,
                     ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Year
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  currentYear,
+                  style: TextStyle(
+                    fontFamily: 'Visby Round CF',
+                    fontSize: 22,
+                    fontWeight: semiBold,
+                    color: txtPrimary,
                   ),
                 ),
               ),
+            ),
+            const SizedBox(height: 15),
 
-            // Bottom Navigation
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: _buildBottomNavigation(),
+            // Date Selector (Horizontal Scroll)
+            SizedBox(
+              height: 81,
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                itemCount: dates.length,
+                itemBuilder: (context, index) {
+                  final date = dates[index];
+                  final isSelected = index == selectedDateIndex;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedDateIndex = index;
+                        // Update meal schedule based on selected date
+                        mealSchedule = _getMealScheduleForDate(index);
+                        // Reset meal selection when changing date
+                        selectedMealIndex = null;
+                        editedMeals.clear();
+                      });
+                    },
+                    child: Container(
+                      width: 63,
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? primaryGreenColor
+                            : const Color(0xFFCAEDD9),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Show year if different from current year
+                          if (date['year'] != null &&
+                              date['year'] != currentYear)
+                            Text(
+                              date['year'] ?? '',
+                              style: TextStyle(
+                                fontFamily: 'Visby Round CF',
+                                fontSize: 10,
+                                fontWeight: semiBold,
+                                color: txtWhite,
+                              ),
+                            ),
+                          Text(
+                            date['month'] ?? '',
+                            style: TextStyle(
+                              fontFamily: 'Visby Round CF',
+                              fontSize: 12,
+                              fontWeight: bold,
+                              color: txtWhite,
+                            ),
+                          ),
+                          Text(
+                            date['day'] ?? '',
+                            style: TextStyle(
+                              fontFamily: 'Visby Round CF',
+                              fontSize: 18,
+                              fontWeight: bold,
+                              color: txtWhite,
+                            ),
+                          ),
+                          Text(
+                            date['dayName'] ?? '',
+                            style: TextStyle(
+                              fontFamily: 'Visby Round CF',
+                              fontSize: 12,
+                              fontWeight: bold,
+                              color: txtWhite,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 25),
+
+            // Meal Schedule List (Vertical Scroll)
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 20),
+                itemCount: mealSchedule.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 15),
+                itemBuilder: (context, index) {
+                  final item = mealSchedule[index];
+                  if (item['type'] == 'water') {
+                    return _buildWaterItem(item);
+                  } else {
+                    return _buildMealItem(item, index);
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -314,13 +342,6 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
       decoration: BoxDecoration(
         border: Border.all(color: const Color(0xFFCDCDCD)),
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x19000000),
-            blurRadius: 24,
-            offset: const Offset(0, -4),
-          ),
-        ],
         color: bgWhite,
       ),
       child: Column(
@@ -341,14 +362,10 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
               Container(
                 width: 26,
                 height: 26,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEDEDED),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Icon(
-                  Icons.delete_outline,
-                  size: 16,
-                  color: txtSecondary,
+                child: SvgPicture.asset(
+                  'assets/jadwal/minum.svg',
+                  width: 12,
+                  height: 12,
                 ),
               ),
             ],
@@ -392,15 +409,10 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
         decoration: BoxDecoration(
-          border: Border.all(color: primaryGreenColor),
+          border: Border.all(
+            color: isSelected ? primaryGreenColor : const Color(0xFFCDCDCD),
+          ),
           borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(0x19000000),
-              blurRadius: 24,
-              offset: const Offset(0, -4),
-            ),
-          ],
           color: bgWhite,
         ),
         child: Column(
@@ -421,14 +433,10 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
                 Container(
                   width: 26,
                   height: 26,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFEDEDED),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Icon(
-                    Icons.delete_outline,
-                    size: 16,
-                    color: txtSecondary,
+                  child: SvgPicture.asset(
+                    'assets/jadwal/makan.svg',
+                    width: 8,
+                    height: 8,
                   ),
                 ),
               ],
@@ -663,81 +671,6 @@ class _JadwalMakankuPageState extends State<JadwalMakankuPage> {
             onPressed: () => Navigator.pop(context),
             style: ElevatedButton.styleFrom(backgroundColor: primaryGreenColor),
             child: Text('Tutup', style: TextStyle(color: txtWhite)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigation() {
-    return Container(
-      decoration: BoxDecoration(
-        color: bgWhite,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildNavItem(Icons.home_outlined, 'Beranda', false, '/beranda'),
-              _buildNavItem(
-                Icons.calendar_today_outlined,
-                'Jadwal',
-                true,
-                '/jadwal',
-              ),
-              _buildNavItem(Icons.store_outlined, 'Warung', false, '/warung'),
-              _buildNavItem(
-                Icons.video_library_outlined,
-                'Media',
-                false,
-                '/media',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-    IconData icon,
-    String label,
-    bool isActive,
-    String route,
-  ) {
-    return GestureDetector(
-      onTap: () {
-        if (!isActive) {
-          Get.toNamed(route);
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: isActive ? primaryGreenColor : txtSecondary,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Visby Round CF',
-              fontSize: 12,
-              color: isActive ? primaryGreenColor : txtSecondary,
-              fontWeight: isActive ? semiBold : regular,
-            ),
           ),
         ],
       ),

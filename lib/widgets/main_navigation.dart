@@ -3,6 +3,7 @@ import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
 import 'package:flutter_pirinku/pages/beranda_page.dart';
 import 'package:flutter_pirinku/pages/schedule_page.dart';
 import 'package:flutter_pirinku/pages/warung_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class MainNavigation extends StatefulWidget {
   final int initialIndex;
@@ -65,20 +66,10 @@ class _MainNavigationState extends State<MainNavigation> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.home_outlined, Icons.home, 'Beranda', 0),
-              _buildNavItem(
-                Icons.calendar_today_outlined,
-                Icons.calendar_today,
-                'Jadwal',
-                1,
-              ),
-              _buildNavItem(Icons.store_outlined, Icons.store, 'Warung', 2),
-              _buildNavItem(
-                Icons.video_library_outlined,
-                Icons.video_library,
-                'Media',
-                3,
-              ),
+              _buildNavItem('assets/navbar/house.svg', 'Beranda', 0),
+              _buildNavItem('assets/navbar/jadwal.svg', 'Jadwal', 1),
+              _buildNavItem('assets/navbar/warung.svg', 'Warung', 2),
+              _buildNavItem('assets/navbar/media.svg', 'Media', 3),
             ],
           ),
         ),
@@ -86,12 +77,7 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  Widget _buildNavItem(
-    IconData outlinedIcon,
-    IconData filledIcon,
-    String label,
-    int index,
-  ) {
+  Widget _buildNavItem(String svgAsset, String label, int index) {
     final isActive = _currentIndex == index;
 
     return GestureDetector(
@@ -103,10 +89,14 @@ class _MainNavigationState extends State<MainNavigation> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              isActive ? filledIcon : outlinedIcon,
-              color: isActive ? primaryGreenColor : txtSecondary,
-              size: 24,
+            SvgPicture.asset(
+              svgAsset,
+              width: 24,
+              height: 24,
+              colorFilter: ColorFilter.mode(
+                isActive ? primaryGreenColor : txtSecondary,
+                BlendMode.srcIn,
+              ),
             ),
             const SizedBox(height: 4),
             Text(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
-import 'package:flutter_pirinku/widgets/menu_icon.dart';
+import 'package:flutter_pirinku/widgets/home_menu_icon.dart';
 import 'package:flutter_pirinku/widgets/schedule_card.dart';
 import 'package:flutter_pirinku/widgets/food_product_card.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class BerandaPage extends StatefulWidget {
   const BerandaPage({Key? key}) : super(key: key);
@@ -64,11 +65,7 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
 
             // Floating Chat Button
-            Positioned(
-              right: 16,
-              bottom: 16,
-              child: _buildFloatingChatButton(),
-            ),
+            Positioned(right: 16, bottom: 16, child: _buildFloatingAIButton()),
           ],
         ),
       ),
@@ -82,73 +79,69 @@ class _BerandaPageState extends State<BerandaPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Profile Picture
-          Container(
-            width: 49,
-            height: 49,
-            decoration: BoxDecoration(
-              color: txtSecondary,
-              shape: BoxShape.circle,
-            ),
-            child: ClipOval(
-              child: Image.network(
-                'https://placehold.co/49x49',
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.person, color: txtWhite, size: 24);
-                },
-              ),
-            ),
+          CircleAvatar(
+            radius: 24.5,
+            backgroundColor: primaryGreenColor,
+            backgroundImage: AssetImage('assets/beranda/pp.png'),
           ),
 
           // Greeting
-          Column(
-            children: [
-              Text(
-                'Selamat Datang',
-                style: TextStyle(
-                  color: txtPrimary,
-                  fontSize: 14,
-                  fontFamily: 'Visby Round CF',
-                  fontWeight: medium,
+          Container(
+            width: 106,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 4,
+              children: [
+                SizedBox(
+                  width: 106,
+                  child: Text(
+                    'Selamat Datang',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: txtPrimary,
+                      fontSize: 13,
+                      fontFamily: 'Visby Round CF',
+                      fontWeight: medium,
+                    ),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Renata',
-                style: TextStyle(
-                  color: txtPrimary,
-                  fontSize: 16,
-                  fontFamily: 'Visby Round CF',
-                  fontWeight: semiBold,
+                SizedBox(
+                  width: 106,
+                  child: Text(
+                    'Renata',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: txtPrimary,
+                      fontSize: 16,
+                      fontFamily: 'Visby Round CF',
+                      fontWeight: semiBold,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           // Notification Bell
           Container(
             width: 49,
             height: 49,
-            decoration: BoxDecoration(color: Colors.transparent),
-            child: Stack(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 10,
               children: [
-                Center(
-                  child: Icon(
-                    Icons.notifications_outlined,
-                    color: txtPrimary,
-                    size: 24,
-                  ),
-                ),
-                Positioned(
-                  right: 12,
-                  top: 12,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: bgRedColor,
-                      shape: BoxShape.circle,
-                    ),
+                Container(
+                  width: 24,
+                  height: 24,
+                  child: SvgPicture.asset(
+                    'assets/beranda/bell.svg',
+                    width: 24,
+                    height: 24,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ],
@@ -164,30 +157,28 @@ class _BerandaPageState extends State<BerandaPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        spacing: 7,
         children: [
-          MenuIcon(
-            icon: Icons.restaurant_menu,
+          HomeMenuIcon(
+            iconAsset: 'beranda/jadwal.svg',
             label: 'Jadwal',
-            backgroundColor: bgRedColor,
-            onTap: () => print('Jadwal'),
+            onTap: () {},
           ),
-          MenuIcon(
-            icon: Icons.shopping_basket,
+          HomeMenuIcon(
+            iconAsset: 'beranda/belanja.svg',
             label: 'Belanja',
-            backgroundColor: bgRedColor,
-            onTap: () => print('Belanja'),
+            onTap: () {},
           ),
-          MenuIcon(
-            icon: Icons.book,
+          HomeMenuIcon(
+            iconAsset: 'beranda/resepku.svg',
             label: 'Resepku',
-            backgroundColor: bgRedColor,
-            onTap: () => print('Resepku'),
+            onTap: () {},
           ),
-          MenuIcon(
-            icon: Icons.shopping_bag,
+          HomeMenuIcon(
+            iconAsset: 'beranda/pesanan.svg',
             label: 'Pesanan',
-            backgroundColor: bgRedColor,
-            onTap: () => print('Pesanan'),
+            onTap: () {},
           ),
         ],
       ),
@@ -195,57 +186,17 @@ class _BerandaPageState extends State<BerandaPage> {
   }
 
   Widget _buildBannerCarousel() {
-    return SizedBox(
+    return Container(
       height: 119,
-      child: PageView.builder(
-        controller: _bannerController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentBannerPage = index;
-          });
-        },
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [primaryGreenColor, secondaryGreenColor],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Panen sayuran\nberkualitas, Siap antar\nke rumah anda!',
-                            style: TextStyle(
-                              color: txtWhite,
-                              fontSize: 14,
-                              fontFamily: 'Visby Round CF',
-                              fontWeight: semiBold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Icon(Icons.local_florist, color: txtWhite, size: 60),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.asset(
+          'assets/beranda/banner.png',
+          width: 343,
+          height: 119,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -256,13 +207,25 @@ class _BerandaPageState extends State<BerandaPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Jadwalku',
-            style: TextStyle(
-              color: txtPrimary,
-              fontSize: 16,
-              fontFamily: 'Visby Round CF',
-              fontWeight: semiBold,
+          Container(
+            width: double.infinity,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 134,
+              children: [
+                Text(
+                  'Jadwalku',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: txtPrimary,
+                    fontSize: 16,
+                    fontFamily: 'Visby Round CF',
+                    fontWeight: semiBold,
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 15),
@@ -274,15 +237,15 @@ class _BerandaPageState extends State<BerandaPage> {
                 ScheduleCard(
                   time: '09.40',
                   message: 'Segera hidangkan\nsarapanmu',
-                  imageUrl: 'https://placehold.co/100x100',
-                  onTap: () => print('Schedule 1'),
+                  imageAsset: 'beranda/jadwalku1.png',
+                  onTap: () {},
                 ),
                 const SizedBox(width: 25),
                 ScheduleCard(
                   time: '19.20',
                   message: 'Segera hidangkan\nmakan malammu',
-                  imageUrl: 'https://placehold.co/100x100',
-                  onTap: () => print('Schedule 2'),
+                  imageAsset: 'beranda/jadwalku2.png',
+                  onTap: () {},
                 ),
               ],
             ),
@@ -303,6 +266,7 @@ class _BerandaPageState extends State<BerandaPage> {
             children: [
               Text(
                 'Warung Lokal',
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   color: txtPrimary,
                   fontSize: 16,
@@ -310,16 +274,14 @@ class _BerandaPageState extends State<BerandaPage> {
                   fontWeight: semiBold,
                 ),
               ),
-              GestureDetector(
-                onTap: () => print('Lihat Semua'),
-                child: Text(
-                  'Lihat Semua',
-                  style: TextStyle(
-                    color: primaryGreenColor,
-                    fontSize: 14,
-                    fontFamily: 'Visby Round CF',
-                    fontWeight: medium,
-                  ),
+              Text(
+                'Lihat Semua',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: primaryGreenColor,
+                  fontSize: 14,
+                  fontFamily: 'Visby Round CF',
+                  fontWeight: medium,
                 ),
               ),
             ],
@@ -334,23 +296,23 @@ class _BerandaPageState extends State<BerandaPage> {
             children: [
               FoodProductCard(
                 name: 'Paket Sayur Asem',
-                price: 'Rp. 6.000',
-                imageUrl: 'https://placehold.co/186x132',
-                onTap: () => print('Product 1'),
+                price: 'Rp. 6000',
+                imageAsset: 'beranda/warunglokal1.png',
+                onTap: () {},
               ),
               const SizedBox(width: 16),
               FoodProductCard(
                 name: 'Karedok',
                 price: 'Rp. 12.000',
-                imageUrl: 'https://placehold.co/186x132',
-                onTap: () => print('Product 2'),
+                imageAsset: 'beranda/warunglokal2.png',
+                onTap: () {},
               ),
               const SizedBox(width: 16),
               FoodProductCard(
                 name: 'Paket Sayur Sop',
                 price: 'Rp. 12.000',
-                imageUrl: 'https://placehold.co/186x132',
-                onTap: () => print('Product 3'),
+                imageAsset: 'beranda/warunglokal1.png',
+                onTap: () {},
               ),
             ],
           ),
@@ -359,24 +321,20 @@ class _BerandaPageState extends State<BerandaPage> {
     );
   }
 
-  Widget _buildFloatingChatButton() {
+  Widget _buildFloatingAIButton() {
     return GestureDetector(
-      onTap: () => print('Chat'),
+      onTap: () {},
       child: Container(
         width: 75,
         height: 75,
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: primaryGreenColor,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          shape: OvalBorder(),
         ),
-        child: Icon(Icons.chat_bubble, color: txtWhite, size: 32),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Image.asset('assets/beranda/ai.png', fit: BoxFit.contain),
+        ),
       ),
     );
   }

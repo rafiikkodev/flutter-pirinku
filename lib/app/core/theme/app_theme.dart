@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // Warna Utama
 Color primaryGreenColor = const Color(0xff43B275);
@@ -14,18 +13,27 @@ Color txtPrimary = const Color(0xff252525);
 Color txtSecondary = const Color(0xffCDCDCD);
 Color txtWhite = const Color(0xffFFFFFF);
 
-// Warna Text
-TextStyle primaryTextStyle = GoogleFonts.poppins(
-  color: txtPrimary,
+// Font Family
+const String visbyCF = 'Visby CF';
+const String visbyRoundCF = 'Visby Round CF';
+
+// Warna Text dengan Visby Round CF
+TextStyle primaryTextStyle = const TextStyle(
+  fontFamily: visbyRoundCF,
+  color: Color(0xff252525),
 );
-TextStyle secondaryTextStyle = GoogleFonts.poppins(
-  color: txtSecondary,
+TextStyle secondaryTextStyle = const TextStyle(
+  fontFamily: visbyRoundCF,
+  color: Color(0xffCDCDCD),
 );
-TextStyle whiteTextStyle = GoogleFonts.poppins(
-  color: txtWhite,
+TextStyle whiteTextStyle = const TextStyle(
+  fontFamily: visbyRoundCF,
+  color: Color(0xffFFFFFF),
 );
 
 // Font Weight
+FontWeight thin = FontWeight.w100;
+FontWeight extraLight = FontWeight.w200;
 FontWeight light = FontWeight.w300;
 FontWeight regular = FontWeight.w400;
 FontWeight medium = FontWeight.w500;

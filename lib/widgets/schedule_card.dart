@@ -5,6 +5,7 @@ class ScheduleCard extends StatelessWidget {
   final String time; // Format: "HH:mm" atau "HH.mm"
   final String message;
   final String? imageUrl;
+  final String? imageAsset;
   final VoidCallback? onTap;
 
   const ScheduleCard({
@@ -12,6 +13,7 @@ class ScheduleCard extends StatelessWidget {
     required this.time,
     required this.message,
     this.imageUrl,
+    this.imageAsset,
     this.onTap,
   }) : super(key: key);
 
@@ -43,7 +45,7 @@ class ScheduleCard extends StatelessWidget {
   }
 
   Color _getBackgroundColor() {
-    return _isApproaching() ? primaryGreenColor : txtSecondary;
+    return _isApproaching() ? primaryGreenColor : const Color(0xFFFFFFFF);
   }
 
   Color _getTextColor() {
@@ -63,9 +65,9 @@ class ScheduleCard extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           shadows: const [
             BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 24,
-              offset: Offset(0, 4),
+              color: Color(0x0D000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
               spreadRadius: 0,
             ),
           ],
@@ -79,10 +81,18 @@ class ScheduleCard extends StatelessWidget {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: imageUrl != null
+              child: imageAsset != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        'assets/$imageAsset',
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : imageUrl != null
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
                       child: Image.network(

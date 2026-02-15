@@ -34,9 +34,9 @@ class WarungCard extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           shadows: const [
             BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 24,
-              offset: Offset(0, 4),
+              color: Color(0x0D000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
               spreadRadius: 0,
             ),
           ],
