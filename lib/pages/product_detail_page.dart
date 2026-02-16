@@ -3,6 +3,8 @@ import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
 import 'package:flutter_pirinku/widgets/quantity_counter.dart';
 import 'package:flutter_pirinku/widgets/discount_badge.dart';
 import 'package:flutter_pirinku/pages/cart_page.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:intl/intl.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final String productName;
@@ -28,6 +30,11 @@ class ProductDetailPage extends StatefulWidget {
 
 class _ProductDetailPageState extends State<ProductDetailPage> {
   int quantity = 0;
+
+  String _formatPrice(double price) {
+    final formatter = NumberFormat('#,###', 'id_ID');
+    return formatter.format(price.toInt());
+  }
 
   void _incrementQuantity() {
     setState(() {
@@ -95,9 +102,16 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Positioned(
       left: 0,
       top: 0,
+      right: 0,
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.only(top: 55, left: 16, right: 16),
+        padding: const EdgeInsets.only(
+          top: 55,
+          left: 16,
+          right: 16,
+          bottom: 16,
+        ),
+        decoration: BoxDecoration(color: lightBackgroundColor),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -106,13 +120,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: lightBackgroundColor.withOpacity(0.9),
-                      shape: BoxShape.circle,
+                    child: Center(
+                      child: SvgPicture.asset('assets/icons/icon_back.svg'),
                     ),
-                    child: Icon(Icons.arrow_back, size: 20, color: txtPrimary),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -129,7 +139,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
             GestureDetector(
               onTap: () {
-                // Share product
+                // Go to cart
               },
               child: Container(
                 width: 32,
@@ -138,7 +148,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   color: lightBackgroundColor.withOpacity(0.9),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.share_outlined, size: 20, color: txtPrimary),
+                child: Center(
+                  child: SvgPicture.asset(
+                    'assets/warung/troli.svg',
+                    width: 20,
+                    height: 20,
+                    colorFilter: ColorFilter.mode(txtPrimary, BlendMode.srcIn),
+                  ),
+                ),
               ),
             ),
           ],
@@ -151,27 +168,20 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 210.94,
-      decoration: BoxDecoration(color: txtSecondary),
       child: widget.imageUrl != null
           ? Image.network(
               widget.imageUrl!,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                return Center(
-                  child: Icon(
-                    Icons.image_not_supported,
-                    size: 60,
-                    color: txtWhite,
-                  ),
+                return Image.asset(
+                  'assets/gambar_dummy/gambar detail produk.png',
+                  fit: BoxFit.cover,
                 );
               },
             )
-          : Center(
-              child: Icon(
-                Icons.shopping_bag_outlined,
-                size: 60,
-                color: txtWhite,
-              ),
+          : Image.asset(
+              'assets/gambar_dummy/gambar detail produk.png',
+              fit: BoxFit.cover,
             ),
     );
   }
@@ -200,7 +210,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               DiscountBadge(discountText: 'Diskon ${widget.discountPercent}%'),
               const SizedBox(width: 9),
               Text(
-                'Rp${widget.originalPrice.toStringAsFixed(0)}',
+                'Rp${_formatPrice(widget.originalPrice)}',
                 style: TextStyle(
                   color: const Color(0xFFCBCBCB),
                   fontSize: 14,
@@ -213,7 +223,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ),
           const SizedBox(height: 13),
           Text(
-            'Rp${widget.discountedPrice.toStringAsFixed(0)}',
+            'Rp${_formatPrice(widget.discountedPrice)}',
             style: TextStyle(
               color: txtPrimary,
               fontSize: 22,
@@ -222,15 +232,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
           ),
           const SizedBox(height: 13),
-          Text(
-            'Sertifikat: Halal\nKondisi: Baru\nMin. Pemesanan: 1 Buah\nToko: ${widget.storeName}',
-            style: TextStyle(
-              color: txtPrimary,
-              fontSize: 14,
-              fontFamily: 'Visby Round CF',
-              fontWeight: medium,
-              height: 1.20,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildBulletPoint('Sertifikat: Halal'),
+              const SizedBox(height: 4),
+              _buildBulletPoint('Kondisi: Baru'),
+              const SizedBox(height: 4),
+              _buildBulletPoint('Min. Pemesanan: 1 Buah'),
+              const SizedBox(height: 4),
+              _buildBulletPoint('Toko: ${widget.storeName}'),
+            ],
           ),
           const SizedBox(height: 24),
         ],
@@ -287,6 +299,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               height: 1.67,
             ),
           ),
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -296,19 +309,24 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Positioned(
       left: 16,
       right: 16,
-      bottom: 16,
+      bottom: 55,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          QuantityCounter(
-            quantity: quantity,
-            onIncrement: _incrementQuantity,
-            onDecrement: _decrementQuantity,
-            backgroundColor: primaryGreenColor,
-            borderColor: primaryGreenColor,
-            iconColor: txtWhite,
-            textColor: txtWhite,
-            size: 16,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              QuantityCounter(
+                quantity: quantity,
+                onIncrement: _incrementQuantity,
+                onDecrement: _decrementQuantity,
+                backgroundColor: primaryGreenColor,
+                borderColor: primaryGreenColor,
+                iconColor: txtWhite,
+                textColor: txtWhite,
+                size: 16,
+              ),
+            ],
           ),
           const SizedBox(height: 15),
           GestureDetector(
@@ -335,13 +353,48 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       fontWeight: semiBold,
                     ),
                   ),
-                  Icon(Icons.shopping_cart, size: 26, color: txtWhite),
+                  SvgPicture.asset(
+                    'assets/warung/troli.svg',
+                    width: 26,
+                    height: 26,
+                    colorFilter: ColorFilter.mode(txtWhite, BlendMode.srcIn),
+                  ),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildBulletPoint(String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '• ',
+          style: TextStyle(
+            color: txtPrimary,
+            fontSize: 14,
+            fontFamily: 'Visby Round CF',
+            fontWeight: medium,
+            height: 1.20,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: txtPrimary,
+              fontSize: 14,
+              fontFamily: 'Visby Round CF',
+              fontWeight: medium,
+              height: 1.20,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
