@@ -29,8 +29,8 @@ class QuantityCounter extends StatelessWidget {
     final bColor = borderColor ?? primaryGreenColor;
     final iColor = iconColor ?? primaryGreenColor;
     final tColor = textColor ?? txtPrimary;
-    final buttonSize = size ?? 20.0;
-    final fontSize = size != null ? size! * 0.5 : 10.0;
+    final buttonSize = size ?? 32.0;
+    final fontSize = size != null ? size! * 0.7 : 18.0;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
