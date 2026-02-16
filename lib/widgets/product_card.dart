@@ -117,11 +117,13 @@ class ProductCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(50),
                     ),
                   ),
-                  child: SvgPicture.asset(
-                    'assets/warung/troli.svg',
-                    width: 15,
-                    height: 15,
-                    colorFilter: ColorFilter.mode(txtWhite, BlendMode.srcIn),
+                  child: Center(
+                    child: SvgPicture.asset(
+                      'assets/warung/troli.svg',
+                      width: 15,
+                      height: 15,
+                      colorFilter: ColorFilter.mode(txtWhite, BlendMode.srcIn),
+                    ),
                   ),
                 ),
               ),

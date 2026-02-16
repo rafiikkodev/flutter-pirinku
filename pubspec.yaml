@@ -41,6 +41,7 @@ dependencies:
   firebase_core: ^3.13.0
   firebase_auth: ^5.6.2
   cloud_firestore: ^5.6.11
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +72,9 @@ flutter:
     - assets/navbar/
     - assets/jadwal/
     - assets/warung/
+    - assets/icons/
+    - assets/fonts/
+    - assets/gambar_dummy/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
