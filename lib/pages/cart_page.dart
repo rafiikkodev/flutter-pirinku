@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pirinku/app/core/theme/app_theme.dart';
+import 'package:flutter_pirinku/pages/checkout_page.dart';
 import 'package:flutter_pirinku/widgets/cart_item_widget.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CartPage extends StatefulWidget {
   final List<Map<String, dynamic>> items;
@@ -93,6 +95,17 @@ class _CartPageState extends State<CartPage> {
     }
   }
 
+  String _formatPrice(double value) {
+    final str = value.toStringAsFixed(0);
+    final buffer = StringBuffer();
+    final offset = str.length % 3;
+    for (int i = 0; i < str.length; i++) {
+      if (i != 0 && (i - offset) % 3 == 0) buffer.write('.');
+      buffer.write(str[i]);
+    }
+    return buffer.toString();
+  }
+
   double _calculateTotal() {
     double total = 0;
     for (var items in storeItems.values) {
@@ -121,11 +134,12 @@ class _CartPageState extends State<CartPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: lightBackgroundColor,
+      bottomNavigationBar: _buildBottomBar(),
       body: Stack(
         children: [
           // Scrollable content
           SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 107, bottom: 180),
+            padding: const EdgeInsets.only(top: 107, bottom: 55),
             child: Column(
               children: [
                 ...storeItems.entries.map(
@@ -136,8 +150,6 @@ class _CartPageState extends State<CartPage> {
           ),
           // Fixed header
           _buildHeader(),
-          // Fixed bottom bar
-          _buildBottomBar(),
         ],
       ),
     );
@@ -147,9 +159,16 @@ class _CartPageState extends State<CartPage> {
     return Positioned(
       left: 0,
       top: 0,
+      right: 0,
       child: Container(
         width: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.only(top: 55, left: 16, right: 16),
+        padding: const EdgeInsets.only(
+          top: 55,
+          left: 16,
+          right: 16,
+          bottom: 16,
+        ),
+        decoration: BoxDecoration(color: lightBackgroundColor),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -157,15 +176,7 @@ class _CartPageState extends State<CartPage> {
               children: [
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: Container(
-                    width: 32,
-                    height: 32,
-                    decoration: BoxDecoration(
-                      color: lightBackgroundColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.arrow_back, size: 20, color: txtPrimary),
-                  ),
+                  child: SvgPicture.asset('assets/icons/icon_back.svg'),
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -178,12 +189,6 @@ class _CartPageState extends State<CartPage> {
                   ),
                 ),
               ],
-            ),
-            GestureDetector(
-              onTap: () {
-                // Delete selected items
-              },
-              child: Icon(Icons.delete_outline, size: 24, color: txtPrimary),
             ),
           ],
         ),
@@ -239,7 +244,12 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Icon(Icons.store, size: 20, color: txtPrimary),
+                  SvgPicture.asset(
+                    'assets/warung/warung.svg',
+                    width: 20,
+                    height: 20,
+                    colorFilter: ColorFilter.mode(txtPrimary, BlendMode.srcIn),
+                  ),
                   const SizedBox(width: 5),
                   Text(
                     storeName,
@@ -292,185 +302,206 @@ class _CartPageState extends State<CartPage> {
     final total = _calculateTotal();
     final selectedCount = _getSelectedCount();
 
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: Container(
-        decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: Color(0x19000000),
-              blurRadius: 24,
-              offset: Offset(0, -4),
-              spreadRadius: 0,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Voucher section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              decoration: ShapeDecoration(
-                color: lightBackgroundColor,
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(width: 1, color: Color(0xFFCBCBCB)),
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.confirmation_number_outlined,
-                        size: 20,
-                        color: txtPrimary,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        'Voucher Piringku',
-                        style: TextStyle(
-                          color: txtPrimary,
-                          fontSize: 11,
-                          fontFamily: 'Visby Round CF',
-                          fontWeight: semiBold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Gunakan/masukan kode',
-                        style: TextStyle(
-                          color: const Color(0xFFAFAFAF),
-                          fontSize: 10,
-                          fontFamily: 'Visby Round CF',
-                          fontWeight: semiBold,
-                        ),
-                      ),
-                      Icon(Icons.chevron_right, size: 14, color: txtSecondary),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            // Checkout section
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 55),
+      decoration: const BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x19000000),
+            blurRadius: 24,
+            offset: Offset(0, -4),
+            spreadRadius: 0,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Voucher section
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            decoration: ShapeDecoration(
               color: lightBackgroundColor,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: _toggleSelectAll,
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: ShapeDecoration(
-                            color: selectAll
-                                ? primaryGreenColor
-                                : lightBackgroundColor,
-                            shape: RoundedRectangleBorder(
-                              side: BorderSide(
-                                width: 1,
-                                color: selectAll
-                                    ? primaryGreenColor
-                                    : txtPrimary,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 1, color: Color(0xFFCBCBCB)),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    SvgPicture.asset(
+                      'assets/warung/voucher.svg',
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                        txtPrimary,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Voucher Pirinku',
+                      style: TextStyle(
+                        color: txtPrimary,
+                        fontSize: 11,
+                        fontFamily: 'Visby Round CF',
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Gunakan/masukan kode',
+                      style: TextStyle(
+                        color: const Color(0xFFAFAFAF),
+                        fontSize: 10,
+                        fontFamily: 'Visby Round CF',
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                    Icon(Icons.chevron_right, size: 14, color: txtSecondary),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Checkout section
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            color: lightBackgroundColor,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _toggleSelectAll,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: ShapeDecoration(
+                          color: selectAll
+                              ? primaryGreenColor
+                              : lightBackgroundColor,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(
+                              width: 1,
+                              color: selectAll ? primaryGreenColor : txtPrimary,
                             ),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: selectAll
-                              ? Icon(Icons.check, size: 16, color: txtWhite)
-                              : null,
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Semua',
-                        style: TextStyle(
-                          color: txtPrimary,
-                          fontSize: 14,
-                          fontFamily: 'Visby Round CF',
-                          fontWeight: semiBold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Total ',
-                              style: TextStyle(
-                                color: txtPrimary,
-                                fontSize: 12,
-                                fontFamily: 'Visby Round CF',
-                                fontWeight: semiBold,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'Rp${total.toStringAsFixed(0)}',
-                              style: TextStyle(
-                                color: primaryGreenColor,
-                                fontSize: 12,
-                                fontFamily: 'Visby Round CF',
-                                fontWeight: semiBold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      GestureDetector(
-                        onTap: selectedCount > 0
-                            ? () {
-                                // Navigate to checkout
-                              }
+                        child: selectAll
+                            ? Icon(Icons.check, size: 16, color: txtWhite)
                             : null,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          decoration: ShapeDecoration(
-                            color: selectedCount > 0
-                                ? primaryGreenColor
-                                : txtSecondary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                          ),
-                          child: Text(
-                            'Checkout ($selectedCount)',
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Semua',
+                      style: TextStyle(
+                        color: txtPrimary,
+                        fontSize: 14,
+                        fontFamily: 'Visby Round CF',
+                        fontWeight: semiBold,
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Total ',
                             style: TextStyle(
-                              color: txtWhite,
+                              color: txtPrimary,
                               fontSize: 12,
                               fontFamily: 'Visby Round CF',
                               fontWeight: semiBold,
                             ),
                           ),
+                          TextSpan(
+                            text: 'Rp${_formatPrice(total)}',
+                            style: TextStyle(
+                              color: primaryGreenColor,
+                              fontSize: 12,
+                              fontFamily: 'Visby Round CF',
+                              fontWeight: semiBold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    GestureDetector(
+                      onTap: selectedCount > 0
+                          ? () {
+                              // Collect all selected items and navigate to CheckoutPage
+                              final selectedItems = <CheckoutItem>[];
+                              storeItems.forEach((storeName, items) {
+                                for (final item in items) {
+                                  if (item.isSelected) {
+                                    selectedItems.add(
+                                      CheckoutItem(
+                                        name: item.name,
+                                        price: item.price,
+                                        imageUrl: item.image,
+                                        quantity: item.quantity,
+                                        storeName: storeName,
+                                      ),
+                                    );
+                                  }
+                                }
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      CheckoutPage(items: selectedItems),
+                                ),
+                              );
+                            }
+                          : null,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        decoration: ShapeDecoration(
+                          color: selectedCount > 0
+                              ? primaryGreenColor
+                              : txtSecondary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                        ),
+                        child: Text(
+                          'Checkout ($selectedCount)',
+                          style: TextStyle(
+                            color: txtWhite,
+                            fontSize: 12,
+                            fontFamily: 'Visby Round CF',
+                            fontWeight: semiBold,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

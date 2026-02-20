@@ -31,13 +31,17 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       getPages: [
-        GetPage(name: '/', page: () => const SplashPage()),
-        GetPage(name: '/onboarding', page: () => const OnboardingPage()),
-        GetPage(name: '/register', page: () => const RegisterPage()),
-        GetPage(name: '/login', page: () => const LoginPage()),
+        // GetPage(name: '/', page: () => const SplashPage()),
+        // GetPage(name: '/onboarding', page: () => const OnboardingPage()),
+        // GetPage(name: '/register', page: () => const RegisterPage()),
+        // GetPage(name: '/login', page: () => const LoginPage()),
         GetPage(name: '/cookingtool', page: () => const CookingToolPage()),
+        // GetPage(
+        //   name: '/home',
+        //   page: () => const MainNavigation(initialIndex: 0),
+        // ),
         GetPage(
-          name: '/home',
+          name: '/',
           page: () => const MainNavigation(initialIndex: 0),
         ),
         GetPage(
