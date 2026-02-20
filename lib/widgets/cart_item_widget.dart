@@ -24,6 +24,17 @@ class CartItemWidget extends StatelessWidget {
     required this.onDecrement,
   });
 
+  String _formatPrice(double value) {
+    final str = value.toStringAsFixed(0);
+    final buffer = StringBuffer();
+    final offset = str.length % 3;
+    for (int i = 0; i < str.length; i++) {
+      if (i != 0 && (i - offset) % 3 == 0) buffer.write('.');
+      buffer.write(str[i]);
+    }
+    return buffer.toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -94,7 +105,7 @@ class CartItemWidget extends StatelessWidget {
                 ),
               ),
               Text(
-                'Rp${price.toStringAsFixed(0)}',
+                'Rp${_formatPrice(price)}',
                 style: TextStyle(
                   color: txtPrimary,
                   fontSize: 12,
@@ -108,7 +119,11 @@ class CartItemWidget extends StatelessWidget {
                 quantity: quantity,
                 onIncrement: onIncrement,
                 onDecrement: onDecrement,
-                size: 10,
+                backgroundColor: primaryGreenColor,
+                borderColor: primaryGreenColor,
+                iconColor: txtWhite,
+                textColor: txtWhite,
+                size: 16,
               ),
             ],
           ),
